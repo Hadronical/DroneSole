@@ -11,9 +11,16 @@ canvas {
 	caret: underscore;
 	background-color: rgba(50,50,50,150);
 	border-color: rgb(255,255,255);
-	color: rgb(10,250,10);
+	color: #aaa;
 	outline: none;
+	border: 1px solid #555;
 	font-family: 'Courier New';
+	
+	transition: 250ms;
+}
+#inp_console:focus {
+	color: rgb(10,250,10);
+	border: 3px solid #555;
 }
 
 button {

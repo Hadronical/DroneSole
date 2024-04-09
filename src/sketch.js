@@ -101,12 +101,6 @@ function setup () {
 	consoleInp = createInput('');
 	consoleInp.position(0, 0);
 	consoleInp.size(100);
-	consoleInp.style("caret: underscore");
-	consoleInp.style("background-color: rgba(50,50,50,150)");
-	consoleInp.style("border-color: rgb(255,255,255)");
-	consoleInp.style("color: rgb(10,250,10)");
-	consoleInp.style("outline: none");
-	consoleInp.style("font-family: Courier New");
 	consoleInp.input(InputUpdate);
 	consoleInp.hide();
 
