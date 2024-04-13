@@ -294,7 +294,7 @@ function PrintHelpMSG () {
 }
 
 
-function ShowRedacte () {
+function ShowRedacted () {
 	let unredactor = new RegExp('REDACTED','i');
 	helpMSG = helpMSG.replace(unredactor, "type 'sys.prot: false' for cheats :D have fun");
 	helpMSG = helpMSG.replace(unredactor, "unredact all");

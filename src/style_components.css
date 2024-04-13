@@ -1,0 +1,57 @@
+#inp_console {
+	width: 100px;
+	caret: underscore;
+	background-color: rgba(50,50,50,150);
+	border-color: rgb(255,255,255);
+	color: #aaa;
+	outline: none;
+	border: 1px solid #555;
+	font-family: 'Courier New';
+	
+	transition: 400ms;
+}
+#inp_console:hover {
+	border: 3px solid #555;
+}
+#inp_console:focus {
+	color: rgb(10,250,10);
+	border: 3px solid #555;
+}
+
+
+#cnt_menuButtons {
+	width: 15em;
+	display: flex;
+	flex-direction: column;
+	z-index: 1;
+}
+
+
+#btn_play {
+	color: rgb(40, 220, 60);
+}
+#btn_settings {
+	color: rgb(150,150,150);
+}
+#btn_tutorial {
+	color: rgb(200,200,200);
+}
+#btn_mainmenu {
+	color: rgb(250,250,250);
+}
+
+
+#bar_propellant::-webkit-progress-bar {
+	border-radius: 0 10px 10px 0;
+}
+#bar_propellant::-webkit-progress-value {
+	background-color: rgb(220,220,50);
+}
+
+#bar_power::-webkit-progress-value {
+	background-color: rgb(50,100,240);
+}
+
+#bar_damage::-webkit-progress-value {
+	background-color: rgb(220,50,50);
+}

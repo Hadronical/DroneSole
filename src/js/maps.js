@@ -1,6 +1,10 @@
+let mapWidth = 12,
+	mapHeight = 12;
+
+
 // map strings
-const TestMap = `
-wwwwwwwwwwww
+const TestMap = 
+`wwwwwwwwwwww
 wE00d0d0000w
 w000www0000w
 wwwww000p00w

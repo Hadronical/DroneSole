@@ -1,3 +1,9 @@
+let consoleOn = false;
+let consoleWidth = 250;
+
+let prevCmd = [];
+let cmdSuggestions = [];
+
 function DrawCommandPromptWindow(x,y, sizeX,sizeY) {
 	if (consoleOn) {
 		push();
@@ -82,20 +88,20 @@ function ReadConsoleInput (str) {
 		return;
 	}
 
-	//Draw new input as previous command to display
+	// draw new input as previous command to display
 	prevCmd.push(str);
 
-	//Check for mutiple commands (same line)
+	// check for mutiple commands (same line)
 	let possibleCMDs = str.split(', ');
 
 	for (let CMD = 0; CMD < possibleCMDs.length; CMD++) {
-		//Splits input on ' ' character
+		// splits input on ' ' character
 		let newInputCMD = possibleCMDs[CMD].split(' ');
 
-		//Is custom command
+		// is custom command
 		if (CustomCommands.get(newInputCMD[0])) {
 			let CustomCMD = CustomCommands.get(newInputCMD[0]);
-			//Get letiables
+			// get letiables
 			newInputCMD.splice(0,1);
 
 			prevCmd.push(consoleInp.value());
@@ -124,15 +130,15 @@ function ReadConsoleInput (str) {
 		}
 
 
-		//Get command base
+		// get command base
 		let newInput = newInputCMD[0];
 
-		//Get modifiers
+		// get modifiers
 		newInputCMD.splice(0,1);
 
-		//Invoke command
+		// invoke command
 		if (Commands.get(newInput)) {
-			//With array of modifiers as params
+			// with array of modifiers as params
 			Commands.get(newInput).Invoke(newInputCMD);
 		}
 	}

@@ -6,39 +6,34 @@
 /* jshint multistr: true */
 
 
-let Version = "0.2";
+const Version = "0.2";
 let canvas;
 let canvasX = 0,
 	canvasY = 0;
 
 let prevScene = 0;
 let currentScene = 0;
-// Main Menu  = 0
-// Game Scene = 1
-// Pause      = 2
-// Win        = 3
-// How to     = 4
-// Settings   = 5
+const SCENES = {
+	MENU:     0,
+	GAME:     1,
+	PAUSE:    2,
+	WIN:      3,
+	TUTORIAL: 4,
+	SETTINGS: 5,
+	COMPLETE: 6,
+	LOSE:     7,
+}
 
-let Level = 0;
+let current_level = 0;
 
 let Width = 620;
 let Height = 600;
 
 
-let consoleInp;
-let consoleOn = false;
-let consoleWidth = 250;
-
-let prevCmd = [],
-	cmdSuggestions = [];
-
 let zoom = 4;
 let light = 1;
 
 let uSize = 40;
-let mapWidth = 12,
-	mapHeight = 12;
 
 let gridStartPos;
 let endPos;
@@ -56,39 +51,12 @@ let maxDMGSustain = 1;
 let pDMGSustain = 0;
 
 
-//Buttons and stuff
-let playButton;
-let settingsButton;
-let howToButton;
-let toMainButton;
-
-
-//Graphics
-let Title;
-let PlayerDrone;
-let doorTileClosed, doorTileOpen;
-let emptyEntitySprite,
-	FuelTankSprite,
-	BatterySprite,
-	CogSprite,
-	InfoSprite;
 
 //SFX
 
 
 function preload () {
-	Title = loadImage("Assets/DroneSole_title.png");
-	PlayerDrone = loadImage("Assets/Drone.png");
-	
-	doorTileClosed = loadImage("Assets/Door_closed.png");
-	doorTileOpen = loadImage("Assets/Door_open.png");
-	
-	emptyEntitySprite = loadImage("Assets/EmptyEntity.png");
-	FuelTankSprite = loadImage("Assets/FuelTank.png");
-	BatterySprite = loadImage("Assets/Battery.png");
-	CogSprite = loadImage("Assets/Cog.png");
-	
-	InfoSprite = loadImage("Assets/InfoBlock.png");
+	loadImages();
 }
 
 function setup () {
@@ -97,56 +65,27 @@ function setup () {
 
 	gridStartPos = createVector(uSize,uSize);
 
-	// initializing ui
-	consoleInp = createInput('');
-	consoleInp.position(0, 0);
-	consoleInp.size(100);
-	consoleInp.input(InputUpdate);
-	consoleInp.hide();
+	initializeUI();
 
-	let menuButtonsX = 20;
-	let menuButtonsY = height/2 + 30;
-
-	playButton = createButton("Play");
-	playButton.position(canvasX + menuButtonsX, canvasY + menuButtonsY);
-	playButton.size(70, 30);
-	playButton.mousePressed(StartGame);
-
-	settingsButton = createButton("Settings");
-	settingsButton.position(canvasX + menuButtonsX, canvasY + menuButtonsY + menuButtonsSize + 10);
-	settingsButton.size(120, 30);
-	settingsButton.mousePressed(GoToSettings);
-
-	howToButton = createButton("How to Play");
-	howToButton.position(canvasX + menuButtonsX, canvasY + menuButtonsY + 2 * (menuButtonsSize + 10));
-	howToButton.size(165, 30);
-	howToButton.mousePressed(GoToHowTo);
-
-	toMainButton = createButton("Main Menu");
-	toMainButton.position(canvasX + menuButtonsX, canvasY + menuButtonsY + 3 * (menuButtonsSize + 10));
-	toMainButton.size(155, 30);
-	toMainButton.mousePressed(BackToMain);
-
-
-	LoadMapStr(Level);
+	LoadMapStr(current_level);
 }
 
 
 
 function draw () { 
 	switch (currentScene) {
-		case 0: MainMenu();            break;
-		case 1: Play();                break;
-		case 2: Pause();               break;
-		case 3: LevelCompleteScreen(); break;
-		case 4: HowToPlayScreen();     break;
-		case 5: Settings();            break;
-		case 6: GameCompleteScreen();  break;
-		case 7: GameOverScreen();      break;
+		case SCENES.MENU:     MainMenu();            break;
+		case SCENES.GAME:     Play();                break;
+		case SCENES.PAUSE:    Pause();               break;
+		case SCENES.WIN:      LevelCompleteScreen(); break;
+		case SCENES.TUTORIAL: HowToPlayScreen();     break;
+		case SCENES.SETTINGS: Settings();            break;
+		case SCENES.COMPLETE: GameCompleteScreen();  break;
+		case SCENES.LOSE:     GameOverScreen();      break;
 	}
 	
 	if (keyIsPressed) {
-		if ([1,2,4,5,].includes(currentScene)) {
+		if ([1,2,4,5].includes(currentScene)) {
 			if (keyCode === 192) { consoleOn = true; }
 			if (keyCode === ESCAPE) {
 				if (consoleOn) {
@@ -188,23 +127,19 @@ function Play () {
 	translate((width/zoom- 2*realPX)/2 + 75/zoom, (height/zoom - 2*realPY)/2 + 75/zoom);
 	
 	
-	//Draw grid
-	//Grid();
-	
 	push();
 	translate(gridStartPos.x,gridStartPos.y);
 	
 	
-	Tiles.forEach(
-		tile => { tile.Update(); }
-	);
+	for (let tile of Tiles) {
+		tile.Update();
+	}
+	for (let entity of Entities) {
+		entity.Update();
+	}
 	
-	Entities.forEach(
-		entity => { entity.Update(); }
-	);
 	
-	
-	//Draw end point
+	// draw end point
 	push();
 	translate(endPos.x + uSize/2, endPos.y + uSize/2);
 	fill(50,220,50);
@@ -220,8 +155,8 @@ function Play () {
 	pop();
 
 
-	//Win
-	if (p5.Vector.dist(pPos, endPos) <= 0.1) LevelComplete();
+	// winning the game
+	if (p5.Vector.dist(pPos, endPos) <= 0.1) { LevelComplete(); }
 
 
 	if (p5.Vector.dist(pPos, pMoveToPos) <= 5) canMove = true;
@@ -248,18 +183,11 @@ function Play () {
 
 	pop();
 
-	//Draw UI elements
-	DrawUI();
+	// draw UI elements
+	drawUI();
+
 	background(0,(1 - light) * 255);
-
-	if (fadeAlpha >= 0)
-		FadeScreen();
 }
-
-
-
-
-
 
 
 //----------------CONSOLE FUNCTIONS----------------//
@@ -465,7 +393,7 @@ function PlayerScan (radius) {
 
 		}
 
-		//End of dist loop
+		// end of dist loop
 	}
 
 	for (let rL = 1; rL < rowLen; rL++){
@@ -490,88 +418,7 @@ function PlayerScan (radius) {
 	}
 
 	pTargetPower -= 2 * radius;
-
 }
-
-
-// TODO: draw this to a buffer bro
-function Grid () {
-	push();
-	noFill();
-	stroke(100, 150);
-	strokeWeight(0.5);
-
-	//translate(-(width - mapWidth*uSize)/2, -(height - mapHeight*uSize)/2);
-	for (let xDir = 1; xDir < mapWidth + 1; xDir++) {
-		let x = xDir * uSize;
-		push();
-		textAlign(CENTER); textSize(15); fill(255); noStroke();
-		text(xDir - 1, x+uSize/2, 10);
-		pop();
-
-		line(x,uSize, x,mapHeight*uSize - uSize);
-	}
-	for (let yDir = 1; yDir < mapHeight + 1; yDir++) {
-		let y = yDir*uSize
-		push();
-		textAlign(CENTER); textSize(15); fill(255); noStroke();
-		text(yDir - 1, 10, y+uSize/2 + 5);
-		pop();
-
-		line(uSize,y, mapWidth*uSize - uSize,y);
-	}
-	pop();
-}
-
-
-// TODO: make these DOM elements
-function DrawUI () {
-	pFuel = lerp(pFuel, pTargetFuel, 0.1);
-	pPower = lerp(pPower, pTargetPower, 0.2);
-
-
-	// draw fuel indicator
-	push();
-	translate(5, height - 50);
-	fill(50,120);
-	noStroke();
-	rect(-5,-30, 270, 80);
-
-	fill(255);
-
-	textSize(18);
-	textFont("Verdana");
-	text("Propellant: " + round(pFuel, 2) + "%", 0,-5);
-
-	fill(220,220,50);
-	if (pFuel / maxFuel < 0.3) fill(220,50,50);
-	rect(0,3, (pFuel / maxFuel) * 250, 25);
-	pop();
-
-
-	// draw power and DMG sustained indicator  
-	push();
-	translate(width - 5, height - 50);
-	fill(50,120);
-	noStroke();
-	rect(-140,-50, 140 + 5, 100);
-
-	fill(255);
-
-	textSize(18); textAlign(RIGHT);
-	textFont("Verdana");
-	text("Power: " + round(pPower, 2) + "%", 0,-25);
-	text("Damage: " + round(pDMGSustain, 2) * 100 + "%", 0,20);
-
-	fill(50,100,240);
-	if (pPower / maxPower < 0.3) fill(220,50,50);
-	rect(-100,-21, (pPower / maxPower) * 100, 20);
-
-	fill(250,50,50);
-	rect(-100,25, (pDMGSustain / maxDMGSustain) * 100, 20);
-	pop();
-}
-
 
 function lerpPos (pos1, pos2, amt) {
 	pos1.x = lerp(pos1.x, pos2.x, amt);
@@ -588,7 +435,6 @@ function resizeCanvasDynamic () {
 	let otherSide;
 	let newWidth, newHeight;
 
-
 	if (smallestSide == windowWidth - 5) {
 		smallestSide = constrain(smallestSide, 0, min(Width, windowWidth));
 		otherSide = constrain((smallestSide / Width) * Height, 0, Height);
@@ -603,7 +449,6 @@ function resizeCanvasDynamic () {
 		newWidth = smallestSide;
 		newHeight = otherSide;
 	}
-
 
 	resizeCanvas(newWidth, newHeight);
 	canvasX = (windowWidth - newWidth)/2;

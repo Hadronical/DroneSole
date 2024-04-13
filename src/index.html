@@ -4,17 +4,48 @@
 	<script src="libraries/p5.min.js"></script>
 	<script src="libraries/p5.sound.min.js"></script>
 	
-	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="style_class.css">
+	<link rel="stylesheet" type="text/css" href="style_components.css">
 	<meta charset="utf-8">
 </head>
 
 <body>
-	<script src="sketch.js"></script>
-	<script src="console.js"></script>
-	<script src="maps.js"></script>
-	<script src="tile.js"></script>
-	<script src="entity.js"></script>
-	<script src="menus.js"></script>
-	<script src="commands.js"></script>
+	<!-- ui -->
+	<div id="cnt_menuButtons">
+		<button id="btn_play">play</button>
+		<button id="btn_settings">settings</button>
+		<button id="btn_tutorial">how to play</button>
+		<button id="btn_menu">main menu</button>
+	</div>
+
+	<div id="console">
+		<input type="text" id="inp_console">
+	</div>
+
+	<div id="ui_display">
+		<div class="ui" id="ui_propellant">
+			<label for"bar_propellant">Propellant:</label>
+			<progress class="bar" id="bar_propellant" value="80" max="100"></progress>
+		</div>
+		<div class="ui" id="ui_power_damage">
+			<label for"bar_power">Power:</label>
+			<progress class="bar" id="bar_power" value="80" max="100"></progress>
+			<label for"bar_damage">Damage:</label>
+			<progress class="bar" id="bar_damage" value="80" max="100"></progress>
+		</div>
+	</div>
+
+	<div id="overlay_black"></div>
+
+
+	<!-- scripts -->
+	<script src="js/main.js"></script>
+	<script src="js/ui.js"></script>
+	<script src="js/console.js"></script>
+	<script src="js/maps.js"></script>
+	<script src="js/tile.js"></script>
+	<script src="js/entity.js"></script>
+	<script src="js/menus.js"></script>
+	<script src="js/commands.js"></script>
 </body>
 </html>

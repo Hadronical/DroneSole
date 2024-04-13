@@ -1,12 +1,10 @@
 function MainMenu () {
 	background(20);
 
-
 	playButton.show();
 	settingsButton.show();
 	howToButton.show();
 	toMainButton.hide();
-
 
 	push();
 	imageMode(CENTER);
@@ -129,8 +127,8 @@ function GameOverScreen () {
 	text("GAMEOVER!", width/2, height/2 - 50);
 	pop();
 
-	Level = 0;
-	LoadMapStr(Level);
+	current_level = 0;
+	LoadMapStr(current_level);
 }
 
 
@@ -177,41 +175,35 @@ function GameOver(){ SetScene(7); }
 
 
 function LevelComplete () {
-	if (Level == Maps.length - 1) {
+	if (current_level == Maps.length - 1) {
 		EndGame();
 	}
 	else {
 		CompleteLevel();
 	}
 
-	fadeAlpha = 255;
+	FadeScreen();
 
 	zoom = 4;
 	pTargetFuel = 100;
 	pTargetPower = 100;
 	pDMGSustain = 0;
 
-	Level++;
-	LoadMapStr(Level);
+	current_level++;
+	LoadMapStr(current_level);
 }
 
 
 function RestartLevel () {
-	LoadMapStr(Level);
+	LoadMapStr(current_level);
 }
 
 
-var fadeAlpha = 255;
 function FadeScreen () {
-	fadeAlpha -= 2;
-
-	push();
-	background(0, fadeAlpha);
-	textAlign(CENTER); textSize(80);
-	fill(250, fadeAlpha); noStroke();
-	if (Level > 0) 
-		text("Level " + Level, width/2, height/2 - 20);
+	if (current_level > 0) 
+		ovr_black.innerText = `Level ${current_level}`;
 	else 
-		text("Tutorial", width/2, height/2 - 20);
-	pop();
+		ovr_black.innerText = "Tutorial";
+	
+	ovr_black.getAnimations()[0].play();
 }
